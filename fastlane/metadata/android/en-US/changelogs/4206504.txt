@@ -1,0 +1,6 @@
+* Jump to searched message
+* Fix enable dialler integration on Android 17
+* Improve the experimental export
+* Don't linkify invalid URLs
+* Change default "big" media size to 1MB for new installs
+* Many crash fixes
