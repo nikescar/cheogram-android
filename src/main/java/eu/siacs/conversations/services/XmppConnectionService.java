@@ -1997,6 +1997,7 @@ public class XmppConnectionService extends Service {
                             if ("https".equals(link.getScheme())) {
                                 try {
                                     HttpUrl url = HttpUrl.parse(link.toString());
+                                    if (url == null) continue; // Somehow was invalid as HttpUrl despite being a valid URL with https scheme?
                                     OkHttpClient http = getHttpConnectionManager().buildHttpClient(url, account, 5, false);
                                     final var request = new okhttp3.Request.Builder().url(url).head().build();
                                     okhttp3.Response response = null;
