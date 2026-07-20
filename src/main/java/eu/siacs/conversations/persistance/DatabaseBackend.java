@@ -566,9 +566,15 @@ public class DatabaseBackend extends SQLiteOpenHelper {
             }
 
             if (cheogramVersion < 15) {
-                db.execSQL(CREATE_MESSAGE_CONVERSATION_TIME_INDEX);
-                db.execSQL(CREATE_CONVERSATION_EXPORT_INDEX);
-                db.execSQL("PRAGMA cheogram.user_version = 15");
+                 try {
+                      db.execSQL(CREATE_MESSAGE_CONVERSATION_TIME_INDEX);
+                      db.execSQL(CREATE_CONVERSATION_EXPORT_INDEX);
+                      db.execSQL("PRAGMA cheogram.user_version = 15");
+                 } catch (android.database.sqlite.SQLiteException e) {
+                      Log.w(Config.LOGTAG, "Couln't make this index yet. Probably first start?");
+                      db.setTransactionSuccessful();
+                      return;
+                 }
             }
 
             db.setTransactionSuccessful();
