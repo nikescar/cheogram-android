@@ -1934,8 +1934,8 @@ public class DatabaseBackend extends SQLiteOpenHelper {
                         + Conversation.TABLENAME
                         + "."
                         + Conversation.MODE
-                        + " FROM "
-                        + Message.TABLENAME
+                        + " FROM messages_index "
+                        + " CROSS JOIN " + Message.TABLENAME + " ON messages_index.rowid=messages.rowid "
                         + " JOIN "
                         + Conversation.TABLENAME
                         + " ON "
@@ -1945,8 +1945,7 @@ public class DatabaseBackend extends SQLiteOpenHelper {
                         + "="
                         + Conversation.TABLENAME
                         + "."
-                        + Conversation.UUID
-                        + " JOIN messages_index ON messages_index.rowid=messages.rowid WHERE "
+                        + Conversation.UUID + " WHERE "
                         + Message.ENCRYPTION
                         + " NOT IN("
                         + Message.ENCRYPTION_AXOLOTL_NOT_FOR_THIS_DEVICE
