@@ -1915,7 +1915,7 @@ public class DatabaseBackend extends SQLiteOpenHelper {
         return list;
     }
 
-    public Cursor getMessageSearchCursor(final List<String> term, final String uuid) {
+    public Cursor getMessageSearchCursor(final List<String> term, final String uuid, final android.os.CancellationSignal signal) {
         final SQLiteDatabase db = this.getReadableDatabase();
         final StringBuilder SQL = new StringBuilder();
         final String[] selectionArgs;
@@ -1971,7 +1971,7 @@ public class DatabaseBackend extends SQLiteOpenHelper {
         }
         SQL.append(" ORDER BY " + Message.TIME_SENT + " DESC limit " + Config.MAX_SEARCH_RESULTS);
         Log.d(Config.LOGTAG, "search term: " + FtsUtils.toMatchString(term));
-        return db.rawQuery(SQL.toString(), selectionArgs);
+        return db.rawQuery(SQL.toString(), selectionArgs, signal);
     }
 
     public List<String> markFileAsDeleted(final File file, final boolean internal) {

@@ -61,6 +61,7 @@ public class MessageSearchTask implements Runnable, Cancellable {
 	private final OnSearchResultsAvailable onSearchResultsAvailable;
 
 	private boolean isCancelled = false;
+	private android.os.CancellationSignal cancelSignal = null;
 
 	private MessageSearchTask(XmppConnectionService xmppConnectionService, List<String> term, final String uuid, OnSearchResultsAvailable onSearchResultsAvailable) {
 		this.xmppConnectionService = xmppConnectionService;
@@ -70,12 +71,12 @@ public class MessageSearchTask implements Runnable, Cancellable {
 	}
 
 	public static void search(XmppConnectionService xmppConnectionService, List<String> term, final String uuid, OnSearchResultsAvailable onSearchResultsAvailable) {
-		 if (timer != null) {
-			  timer.cancel();
-			  timer = null;
-		 }
-		 if (term == null) {
-			 cancelRunningTasks();
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+		if (term == null) {
+			cancelRunningTasks();
 		} else {
 			timer = new java.util.Timer();
 			timer.schedule(new java.util.TimerTask() {
@@ -93,6 +94,10 @@ public class MessageSearchTask implements Runnable, Cancellable {
 	@Override
 	public void cancel() {
 		this.isCancelled = true;
+		if (cancelSignal != null) {
+			cancelSignal.cancel();
+			cancelSignal = null;
+		}
 	}
 
 	@Override
@@ -106,7 +111,8 @@ public class MessageSearchTask implements Runnable, Cancellable {
 				Log.d(Config.LOGTAG, "canceled search task");
 				return;
 			}
-			cursor = xmppConnectionService.databaseBackend.getMessageSearchCursor(term, uuid);
+			cancelSignal = new android.os.CancellationSignal();
+			cursor = xmppConnectionService.databaseBackend.getMessageSearchCursor(term, uuid, cancelSignal);
 			long dbTimer = SystemClock.elapsedRealtime();
 			if (isCancelled) {
 				Log.d(Config.LOGTAG, "canceled search task");

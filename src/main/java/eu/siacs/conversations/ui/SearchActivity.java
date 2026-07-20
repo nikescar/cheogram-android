@@ -187,6 +187,12 @@ public class SearchActivity extends XmppActivity implements TextWatcher, OnSearc
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+		MessageSearchTask.cancelRunningTasks();
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 		List<String> term = currentSearch.get();
 		if (term != null && term.size() > 0) {
